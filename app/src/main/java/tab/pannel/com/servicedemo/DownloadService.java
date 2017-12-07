@@ -1,11 +1,12 @@
 package tab.pannel.com.servicedemo;
 
-import android.app.Notification;
-import android.app.PendingIntent;
+import android.app.NotificationManager;
 import android.app.Service;
 import android.content.ComponentName;
+import android.content.Context;
 import android.content.Intent;
 import android.os.IBinder;
+import android.support.v4.app.NotificationCompat;
 
 public class DownloadService extends Service {
     public DownloadService() {
@@ -47,14 +48,21 @@ public class DownloadService extends Service {
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         LogUtils.logInfo(getClass().getSimpleName() + "onStartCommand()");
-        Notification notification = new Notification(R.mipmap.ic_launcher_round, "通知",
-                System.currentTimeMillis());
+        //获取NotificationManager实例
+        NotificationManager notifyManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+        //实例化NotificationCompat.Builde并设置相关属性
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(this)
+                //设置小图标
+                .setSmallIcon(R.mipmap.ic_launcher_round)
+                //设置通知标题
+                .setContentTitle("最简单的Notification")
+                //设置通知内容
+                .setContentText("只有小图标、标题、内容");
+        //设置通知时间，默认为系统发出通知的时间，通常不用设置
+        //.setWhen(System.currentTimeMillis());
+        //通过builder.build()方法生成Notification对象,并发送通知,id=1
+        notifyManager.notify(1, builder.build());
 
-        Intent notificationIntent = new Intent(this, MainActivity.class);
-        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, notificationIntent, 0);
-//        notification.setLatestEventInfo(this, "通知栏消息",
-//                "notification_message", pendingIntent);
-        startForeground(03, notification);
         return START_STICKY;
     }
 
